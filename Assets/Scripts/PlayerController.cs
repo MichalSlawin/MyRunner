@@ -5,11 +5,12 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] private SwipeDetection _swipeDetection;
     [SerializeField] private InputAction _move;
+    [SerializeField] private UnityChanController _unityChan;
 
     protected void Awake()
     {
-        _move.performed += context => Move(context.ReadValue<Vector2>());
-        _swipeDetection.SwipePerformed += context => Move(context);
+        _move.performed += context => _unityChan.Move(context.ReadValue<Vector2>());
+        _swipeDetection.SwipePerformed += context => _unityChan.Move(context);
     }
 
     protected void OnEnable()
@@ -20,10 +21,5 @@ public class PlayerController : MonoBehaviour
     protected void OnDisable()
     {
         _move.Disable();
-    }
-
-    private void Move(Vector2 direction)
-    {
-        Debug.Log(direction);
     }
 }

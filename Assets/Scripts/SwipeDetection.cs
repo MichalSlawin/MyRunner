@@ -16,7 +16,7 @@ public class SwipeDetection : MonoBehaviour
     protected void Awake()
     {
         _press.performed += _ => { _initialPosition = _currentPosition; };
-        _press.canceled += _ => DetectSwpie();
+        _press.canceled += _ => DetectSwipe();
     }
 
     protected void OnEnable()
@@ -31,7 +31,7 @@ public class SwipeDetection : MonoBehaviour
         _press.Disable();
     }
 
-    private void DetectSwpie()
+    private void DetectSwipe()
     {
         Vector2 positionDelta = _currentPosition - _initialPosition;
         Vector2 direction = Vector2.zero;
