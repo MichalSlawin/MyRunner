@@ -34,12 +34,18 @@ public class UnityChanController : MonoBehaviour
 	private float _timeCount;
 	private bool _rotating;
 
+	private float _initColHeight;
+	private Vector3 _initColCenter;
+
 	protected void Start()
 	{
 		anim.speed = animSpeed;
 		anim.SetFloat("Speed", 1f);
 		_startRotation = transform.rotation;
 		_targetRotation = transform.rotation;
+
+		_initColHeight = col.height;
+		_initColCenter = col.center;
 	}
 
     protected void FixedUpdate()
@@ -62,6 +68,25 @@ public class UnityChanController : MonoBehaviour
 				transform.position = new Vector3(0, current.y, current.z);
 			}
 		}
+	}
+
+	public void OnJump()
+    {
+		float jumpHeight = anim.GetFloat("JumpHeight");
+		col.height = _initColHeight - jumpHeight;
+		float adjCenterY = _initColCenter.y + jumpHeight;
+		col.center = new Vector3(0, adjCenterY, 0);
+	}
+
+	public void OnJumpFinish()
+    {
+		ResetCollider();
+	}
+
+	private void ResetCollider()
+	{
+		col.height = _initColHeight;
+		col.center = _initColCenter;
 	}
 
 	public void Move(Vector2 direction)
