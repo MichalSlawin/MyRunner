@@ -148,6 +148,9 @@ public class UnityChanController : MonoBehaviour
 
 	private void Slide()
     {
-
-    }
+		if (anim.IsInTransition(0) == false)
+		{
+			anim.SetTrigger("Slide");
+		}
+	}
 }
