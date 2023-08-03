@@ -73,12 +73,26 @@ public class UnityChanController : MonoBehaviour
 	public void OnJump()
     {
 		float jumpHeight = anim.GetFloat("JumpHeight");
+
 		col.height = _initColHeight - jumpHeight;
-		float adjCenterY = _initColCenter.y + jumpHeight;
-		col.center = new Vector3(0, adjCenterY, 0);
+		col.center = new Vector3(0, _initColCenter.y + jumpHeight, 0);
 	}
 
 	public void OnJumpFinish()
+    {
+		ResetCollider();
+	}
+
+	public void OnSlide(float heightMultiplier)
+    {
+		float newHeight = _initColHeight * heightMultiplier;
+		float heightDiff = col.height - newHeight;
+
+		col.height = newHeight;
+		col.center = new Vector3(0, _initColCenter.y - heightDiff, 0);
+	}
+
+	public void OnSlideFinish()
     {
 		ResetCollider();
 	}
