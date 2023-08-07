@@ -4,8 +4,11 @@ using UnityEngine;
 public class UnityChanController : MonoBehaviour
 {
     private const int ROTATION_ANGLE = 45;
+	private const string JUMP_TRIGGER = "Jump";
+	private const string SLIDE_TRIGGER = "Slide";
+	private const string LOSE_TRIGGER = "Lose";
 
-    [SerializeField] private float animSpeed = 1.5f;
+	[SerializeField] private float animSpeed = 1.5f;
 	[SerializeField] private float jumpPower = 3.0f;
 	[SerializeField] private float _moveSpeed = 7f;
 	[SerializeField] private float _rotationSpeed = 5f;
@@ -33,6 +36,7 @@ public class UnityChanController : MonoBehaviour
 	private Coroutine _faceFrontCoroutine;
 	private float _timeCount;
 	private bool _rotating;
+	private bool _lost;
 
 	private float _initColHeight;
 	private Vector3 _initColCenter;
@@ -46,10 +50,17 @@ public class UnityChanController : MonoBehaviour
 
 		_initColHeight = col.height;
 		_initColCenter = col.center;
+
+		_lost = false;
 	}
 
     protected void FixedUpdate()
     {
+		if(_lost)
+        {
+			return;
+        }
+
 		transform.position += transform.forward * _moveSpeed * Time.deltaTime;
 
 		if(_startRotation != _targetRotation)
@@ -69,6 +80,15 @@ public class UnityChanController : MonoBehaviour
 			}
 		}
 	}
+
+	protected void OnCollisionEnter(Collision collision)
+    {
+		if(collision.gameObject.CompareTag("Obstacle"))
+        {
+			anim.SetTrigger(LOSE_TRIGGER);
+			_lost = true;
+        }
+    }
 
 	public void OnJump()
     {
@@ -105,6 +125,11 @@ public class UnityChanController : MonoBehaviour
 
 	public void Move(Vector2 direction)
     {
+		if(_lost)
+        {
+			return;
+        }
+
 		float horizontal = direction.x;
 		float vertical = direction.y;
 
@@ -181,7 +206,7 @@ public class UnityChanController : MonoBehaviour
 		if (anim.IsInTransition(0) == false)
 		{
 			rb.AddForce(Vector3.up * jumpPower, ForceMode.VelocityChange);
-			anim.SetTrigger("Jump");
+			anim.SetTrigger(JUMP_TRIGGER);
 		}
 	}
 
@@ -189,7 +214,7 @@ public class UnityChanController : MonoBehaviour
     {
 		if (anim.IsInTransition(0) == false)
 		{
-			anim.SetTrigger("Slide");
+			anim.SetTrigger(SLIDE_TRIGGER);
 		}
 	}
 }
