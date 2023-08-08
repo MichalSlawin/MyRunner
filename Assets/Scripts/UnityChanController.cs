@@ -1,18 +1,16 @@
-using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class UnityChanController : MonoBehaviour
 {
-    private const int ROTATION_ANGLE = 45;
 	private const string JUMP_TRIGGER = "Jump";
 	private const string SLIDE_TRIGGER = "Slide";
 	private const string LOSE_TRIGGER = "Lose";
+	private const float LANE_OFFSET = 2f;
 
 	[SerializeField] private float animSpeed = 1.5f;
 	[SerializeField] private float jumpPower = 3.0f;
 	[SerializeField] private float _moveSpeed = 7f;
-	[SerializeField] private float _rotationSpeed = 5f;
-	[SerializeField] private float _runRotatedTime = 1f;
 	[SerializeField] private CapsuleCollider col;
 	[SerializeField] private Rigidbody rb;
 	[SerializeField] private Animator anim;
@@ -30,14 +28,11 @@ public class UnityChanController : MonoBehaviour
 		Right
 	}
 
-    private Quaternion _startRotation;
-	private Quaternion _targetRotation;
 	private Lane _occupiedLane = Lane.Middle;
-	private Coroutine _faceFrontCoroutine;
-	private float _timeCount;
-	private bool _rotating;
-	private bool _lost;
+	private Lane _newLane = Lane.Middle;
+	private Direction _direction;
 
+	private bool _lost;
 	private float _initColHeight;
 	private Vector3 _initColCenter;
 
@@ -45,8 +40,6 @@ public class UnityChanController : MonoBehaviour
 	{
 		anim.speed = animSpeed;
 		anim.SetFloat("Speed", 1f);
-		_startRotation = transform.rotation;
-		_targetRotation = transform.rotation;
 
 		_initColHeight = col.height;
 		_initColCenter = col.center;
@@ -61,24 +54,41 @@ public class UnityChanController : MonoBehaviour
 			return;
         }
 
-		transform.position += transform.forward * _moveSpeed * Time.deltaTime;
+		Vector3 direction = new Vector3(GetNewDirectionX(), 0, 1);
+		rb.MovePosition(transform.position + direction * Time.deltaTime * _moveSpeed);
+	}
 
-		if(_startRotation != _targetRotation)
+	private float GetNewDirectionX()
+    {
+		if(_newLane == _occupiedLane)
         {
-			transform.rotation = Quaternion.Lerp(_startRotation, _targetRotation, _rotationSpeed * _timeCount);
-			_timeCount += Time.deltaTime;
+			return 0;
+        }
+
+		if (_newLane == Lane.Left && transform.position.x > -LANE_OFFSET)
+		{
+			return -1;
 		}
 
-		if(transform.rotation.y == 0 && _targetRotation.y == 0)
+		if(_newLane == Lane.Right && transform.position.x < LANE_OFFSET)
         {
-			Vector3 current = transform.position;
-			_rotating = false;
+			return 1;
+        }
 
-			if (_occupiedLane == Lane.Middle && current.x != 0)
-			{
-				transform.position = new Vector3(0, current.y, current.z);
-			}
-		}
+		if(_newLane == Lane.Middle)
+        {
+			if(_direction == Direction.Left && transform.position.x > 0)
+            {
+				return -1;
+            }
+			else if(_direction == Direction.Right && transform.position.x < 0)
+            {
+				return 1;
+            }
+        }
+
+		_occupiedLane = _newLane;
+		return 0;
 	}
 
 	protected void OnCollisionEnter(Collision collision)
@@ -154,51 +164,19 @@ public class UnityChanController : MonoBehaviour
 
 	private void ChangeLane(Direction direction)
     {
-		if(_rotating)
-        {
-			return;
-        }
-
-		if(_faceFrontCoroutine != null)
-        {
-			StopCoroutine(_faceFrontCoroutine);
-		}
-
-		float angle = 0;
-		Lane newLane = _occupiedLane;
-
+		_direction = direction;
 		if (direction == Direction.Right && _occupiedLane != Lane.Right)
         {
-			angle = ROTATION_ANGLE;
-			newLane = _occupiedLane == Lane.Left ? Lane.Middle : Lane.Right;
+			_newLane = _occupiedLane == Lane.Left ? Lane.Middle : Lane.Right;
         }
 		else if (direction == Direction.Left && _occupiedLane != Lane.Left)
         {
-			angle = -ROTATION_ANGLE;
-			newLane = _occupiedLane == Lane.Right ? Lane.Middle : Lane.Left;
+			_newLane = _occupiedLane == Lane.Right ? Lane.Middle : Lane.Left;
 		}
-
-		if (angle != 0)
+		else
         {
-			ChangeRotation(angle);
-			_faceFrontCoroutine = StartCoroutine(FaceFront(newLane));
-		}
-	}
-
-	private IEnumerator FaceFront(Lane newLane)
-    {
-		yield return new WaitForSeconds(_runRotatedTime);
-
-		ChangeRotation(0);
-		_occupiedLane = newLane;
-	}
-
-	private void ChangeRotation(float angle)
-    {
-		_startRotation = transform.rotation;
-		_targetRotation = Quaternion.AngleAxis(angle, transform.up);
-		_timeCount = 0;
-		_rotating = true;
+			_newLane = _occupiedLane;
+        }
 	}
 
 	private void Jump()
