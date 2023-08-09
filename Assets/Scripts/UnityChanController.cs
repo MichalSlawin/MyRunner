@@ -6,7 +6,6 @@ public class UnityChanController : MonoBehaviour
 	private const string JUMP_TRIGGER = "Jump";
 	private const string SLIDE_TRIGGER = "Slide";
 	private const string LOSE_TRIGGER = "Lose";
-	private const float LANE_OFFSET = 2f;
 
 	[SerializeField] private float animSpeed = 1.5f;
 	[SerializeField] private float jumpPower = 3.0f;
@@ -33,11 +32,14 @@ public class UnityChanController : MonoBehaviour
 	private Direction _direction;
 
 	private bool _lost;
+	private bool _initialized;
 	private float _initColHeight;
 	private Vector3 _initColCenter;
 
-	protected void Start()
-	{
+	private bool _canPlay => _lost == false && _initialized;
+
+	public void Initialize()
+    {
 		anim.speed = animSpeed;
 		anim.SetFloat("Speed", 1f);
 
@@ -45,11 +47,12 @@ public class UnityChanController : MonoBehaviour
 		_initColCenter = col.center;
 
 		_lost = false;
+		_initialized = true;
 	}
 
     protected void FixedUpdate()
     {
-		if(_lost)
+		if(_canPlay == false)
         {
 			return;
         }
@@ -65,12 +68,12 @@ public class UnityChanController : MonoBehaviour
 			return 0;
         }
 
-		if (_newLane == Lane.Left && transform.position.x > -LANE_OFFSET)
+		if (_newLane == Lane.Left && transform.position.x > -Game.LANE_OFFSET)
 		{
 			return -1;
 		}
 
-		if(_newLane == Lane.Right && transform.position.x < LANE_OFFSET)
+		if(_newLane == Lane.Right && transform.position.x < Game.LANE_OFFSET)
         {
 			return 1;
         }
@@ -135,7 +138,7 @@ public class UnityChanController : MonoBehaviour
 
 	public void Move(Vector2 direction)
     {
-		if(_lost)
+		if(_canPlay == false)
         {
 			return;
         }
