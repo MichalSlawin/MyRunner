@@ -8,6 +8,7 @@ public class Game : MonoBehaviour
 
     [SerializeField] private UnityChanController _unityChan;
     [SerializeField] private InputAction _start;
+    [SerializeField] private LevelGenerator _levelGenerator;
 
     private bool _gameStarted;
 
@@ -17,6 +18,11 @@ public class Game : MonoBehaviour
         Application.targetFrameRate = 60;
 
         _start.performed += _ => { StartGame(); };
+    }
+
+    protected void Start()
+    {
+        _levelGenerator.Initialize();
     }
 
     protected void OnEnable()

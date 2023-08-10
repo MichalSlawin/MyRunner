@@ -1,5 +1,5 @@
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class UnityChanController : MonoBehaviour
 {
@@ -10,9 +10,10 @@ public class UnityChanController : MonoBehaviour
 	[SerializeField] private float animSpeed = 1.5f;
 	[SerializeField] private float jumpPower = 3.0f;
 	[SerializeField] private float _moveSpeed = 7f;
-	[SerializeField] private CapsuleCollider col;
-	[SerializeField] private Rigidbody rb;
-	[SerializeField] private Animator anim;
+	[SerializeField] private CapsuleCollider _col;
+	[SerializeField] private Rigidbody _rb;
+	[SerializeField] private Animator _anim;
+	[SerializeField] private UnityEvent _nextPartEvent;
 
 	private enum Lane
     {
@@ -40,11 +41,11 @@ public class UnityChanController : MonoBehaviour
 
 	public void Initialize()
     {
-		anim.speed = animSpeed;
-		anim.SetFloat("Speed", 1f);
+		_anim.speed = animSpeed;
+		_anim.SetFloat("Speed", 1f);
 
-		_initColHeight = col.height;
-		_initColCenter = col.center;
+		_initColHeight = _col.height;
+		_initColCenter = _col.center;
 
 		_lost = false;
 		_initialized = true;
@@ -58,7 +59,7 @@ public class UnityChanController : MonoBehaviour
         }
 
 		Vector3 direction = new Vector3(GetNewDirectionX(), 0, 1);
-		rb.MovePosition(transform.position + direction * Time.deltaTime * _moveSpeed);
+		_rb.MovePosition(transform.position + direction * Time.deltaTime * _moveSpeed);
 	}
 
 	private float GetNewDirectionX()
@@ -98,17 +99,25 @@ public class UnityChanController : MonoBehaviour
     {
 		if(collision.gameObject.CompareTag("Obstacle"))
         {
-			anim.SetTrigger(LOSE_TRIGGER);
+			_anim.SetTrigger(LOSE_TRIGGER);
 			_lost = true;
         }
     }
 
-	public void OnJump()
+    protected void OnTriggerEnter(Collider other)
     {
-		float jumpHeight = anim.GetFloat("JumpHeight");
+		if(other.CompareTag("NextPart"))
+        {
+			_nextPartEvent.Invoke();
+		}
+    }
 
-		col.height = _initColHeight - jumpHeight;
-		col.center = new Vector3(0, _initColCenter.y + jumpHeight, 0);
+    public void OnJump()
+    {
+		float jumpHeight = _anim.GetFloat("JumpHeight");
+
+		_col.height = _initColHeight - jumpHeight;
+		_col.center = new Vector3(0, _initColCenter.y + jumpHeight, 0);
 	}
 
 	public void OnJumpFinish()
@@ -119,10 +128,10 @@ public class UnityChanController : MonoBehaviour
 	public void OnSlide(float heightMultiplier)
     {
 		float newHeight = _initColHeight * heightMultiplier;
-		float heightDiff = col.height - newHeight;
+		float heightDiff = _col.height - newHeight;
 
-		col.height = newHeight;
-		col.center = new Vector3(0, _initColCenter.y - heightDiff, 0);
+		_col.height = newHeight;
+		_col.center = new Vector3(0, _initColCenter.y - heightDiff, 0);
 	}
 
 	public void OnSlideFinish()
@@ -132,8 +141,8 @@ public class UnityChanController : MonoBehaviour
 
 	private void ResetCollider()
 	{
-		col.height = _initColHeight;
-		col.center = _initColCenter;
+		_col.height = _initColHeight;
+		_col.center = _initColCenter;
 	}
 
 	public void Move(Vector2 direction)
@@ -184,18 +193,18 @@ public class UnityChanController : MonoBehaviour
 
 	private void Jump()
     {
-		if (anim.IsInTransition(0) == false)
+		if (_anim.IsInTransition(0) == false)
 		{
-			rb.AddForce(Vector3.up * jumpPower, ForceMode.VelocityChange);
-			anim.SetTrigger(JUMP_TRIGGER);
+			_rb.AddForce(Vector3.up * jumpPower, ForceMode.VelocityChange);
+			_anim.SetTrigger(JUMP_TRIGGER);
 		}
 	}
 
 	private void Slide()
     {
-		if (anim.IsInTransition(0) == false)
+		if (_anim.IsInTransition(0) == false)
 		{
-			anim.SetTrigger(SLIDE_TRIGGER);
+			_anim.SetTrigger(SLIDE_TRIGGER);
 		}
 	}
 }
