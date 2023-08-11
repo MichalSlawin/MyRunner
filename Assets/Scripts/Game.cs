@@ -5,6 +5,7 @@ using System;
 public class Game : MonoBehaviour
 {
     public const float LANE_OFFSET = 2f;
+    public const float MIN_OBSTACLES_DISTANCE = 5f;
 
     [SerializeField] private UnityChanController _unityChan;
     [SerializeField] private InputAction _start;
@@ -22,7 +23,7 @@ public class Game : MonoBehaviour
 
     protected void Start()
     {
-        _levelGenerator.Initialize();
+        _levelGenerator.Initialize(_unityChan.transform.position);
     }
 
     protected void OnEnable()

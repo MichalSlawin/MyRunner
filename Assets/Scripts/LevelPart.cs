@@ -3,19 +3,17 @@ using UnityEngine;
 
 public class LevelPart : MonoBehaviour
 {
-    private const float MIN_OBSTACLES_DISTANCE = 5f;
-
     [SerializeField] private List<GameObject> _obstaclesPrefabs;
     [SerializeField] private Transform _obstacles;
     [SerializeField] private Transform _obstaclesStart;
     [SerializeField] private Transform _obstaclesEnd;
 
-    public void Initialize()
+    public void Initialize(float? forcedStartZ = null)
     {
-        float startZ = _obstaclesStart.position.z;
+        float startZ = forcedStartZ ?? _obstaclesStart.position.z;
         float endZ = _obstaclesEnd.position.z;
 
-        for(float z = startZ; z <= endZ; z += MIN_OBSTACLES_DISTANCE)
+        for (float z = startZ; z <= endZ; z += Game.MIN_OBSTACLES_DISTANCE)
         {
             TryInstantiateObstacle(-Game.LANE_OFFSET, z);
             TryInstantiateObstacle(0, z);

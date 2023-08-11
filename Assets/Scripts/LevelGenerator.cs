@@ -4,13 +4,13 @@ public class LevelGenerator : MonoBehaviour
 {
     private const float PART_Z_OFFSET = 150f;
 
-    [SerializeField] LevelPart _currentPart;
-    [SerializeField] LevelPart _nextPart;
-    [SerializeField] LevelPart _levelPartPrefab;
+    [SerializeField] private LevelPart _currentPart;
+    [SerializeField] private LevelPart _nextPart;
+    [SerializeField] private LevelPart _levelPartPrefab;
 
-    public void Initialize()
+    public void Initialize(Vector3 playerInitialPosition)
     {
-        _currentPart.Initialize();
+        _currentPart.Initialize(playerInitialPosition.z + Game.MIN_OBSTACLES_DISTANCE);
         _nextPart.Initialize();
     }
 
