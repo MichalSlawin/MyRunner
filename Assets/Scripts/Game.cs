@@ -10,6 +10,9 @@ public class Game : MonoBehaviour
     [SerializeField] private UnityChanController _unityChan;
     [SerializeField] private InputAction _start;
     [SerializeField] private LevelGenerator _levelGenerator;
+    [SerializeField] private UIController _uIController;
+
+    private float _playerStartZ;
 
     private bool _gameStarted;
 
@@ -23,7 +26,8 @@ public class Game : MonoBehaviour
 
     protected void Start()
     {
-        _levelGenerator.Initialize(_unityChan.transform.position);
+        _playerStartZ = _unityChan.transform.position.z;
+        _levelGenerator.Initialize(_playerStartZ);
     }
 
     protected void OnEnable()
@@ -43,6 +47,7 @@ public class Game : MonoBehaviour
             return;
         }
 
+        _uIController.SwitchPressAnyKeyText(false);
         _unityChan.Initialize();
 
         _start.Disable();

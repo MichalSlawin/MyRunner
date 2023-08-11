@@ -8,9 +8,9 @@ public class LevelGenerator : MonoBehaviour
     [SerializeField] private LevelPart _nextPart;
     [SerializeField] private LevelPart _levelPartPrefab;
 
-    public void Initialize(Vector3 playerInitialPosition)
+    public void Initialize(float playerStartZ)
     {
-        _currentPart.Initialize(playerInitialPosition.z + Game.MIN_OBSTACLES_DISTANCE);
+        _currentPart.Initialize(playerStartZ + Game.MIN_OBSTACLES_DISTANCE);
         _nextPart.Initialize();
     }
 
