@@ -14,6 +14,7 @@ public class UnityChanController : MonoBehaviour
 	[SerializeField] private Rigidbody _rb;
 	[SerializeField] private Animator _anim;
 	[SerializeField] private UnityEvent _nextPartEvent;
+	[SerializeField] private UnityEvent _lostEvent;
 
 	private enum Lane
     {
@@ -101,6 +102,7 @@ public class UnityChanController : MonoBehaviour
         {
 			_anim.SetTrigger(LOSE_TRIGGER);
 			_lost = true;
+			_lostEvent.Invoke();
         }
     }
 

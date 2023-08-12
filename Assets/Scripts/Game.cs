@@ -13,15 +13,29 @@ public class Game : MonoBehaviour
     [SerializeField] private UIController _uIController;
 
     private float _playerStartZ;
-
     private bool _gameStarted;
+    private int _currentScore;
+    private int _bestScore;
+    private DataManager _dataManager;
+    private bool _gameLost;
 
     protected void Awake()
     {
         QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = 60;
 
+        InitDataManager();
+
         _start.performed += _ => { StartGame(); };
+    }
+
+    private void InitDataManager()
+    {
+        _dataManager = new DataManager();
+        _dataManager.Load();
+
+        _bestScore = _dataManager.GetGameData().score;
+        _uIController.SetBestScoreText(_bestScore);
     }
 
     protected void Start()
@@ -40,6 +54,15 @@ public class Game : MonoBehaviour
         _start.Disable();
     }
 
+    protected void FixedUpdate()
+    {
+        if(_gameLost == false)
+        {
+            _currentScore = (int)((_unityChan.transform.position.z - _playerStartZ) * 10);
+            _uIController.SetCurrentScoreText(_currentScore);
+        }
+    }
+
     private void StartGame()
     {
         if(_gameStarted)
@@ -52,5 +75,18 @@ public class Game : MonoBehaviour
 
         _start.Disable();
         _gameStarted = true;
+        _gameLost = false;
+    }
+
+    public void OnGameLost()
+    {
+        _gameLost = true;
+        if(_currentScore > _bestScore)
+        {
+            _bestScore = _currentScore;
+            _uIController.SetBestScoreText(_bestScore);
+            _dataManager.SetBestScore(_bestScore);
+            _dataManager.Save();
+        }
     }
 }
