@@ -1,6 +1,7 @@
 using UnityEngine;
+using System.Collections;
 using UnityEngine.InputSystem;
-using System;
+using UnityEngine.SceneManagement;
 
 public class Game : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class Game : MonoBehaviour
     [SerializeField] private InputAction _start;
     [SerializeField] private LevelGenerator _levelGenerator;
     [SerializeField] private UIController _uIController;
+    [SerializeField] private float _gameRestartTime = 1.5f;
 
     private float _playerStartZ;
     private bool _gameStarted;
@@ -81,10 +83,24 @@ public class Game : MonoBehaviour
     public void OnGameLost()
     {
         _gameLost = true;
-        if(_currentScore > _bestScore)
+        UpdateBestScore();
+        StartCoroutine(RestartGame());
+    }
+
+    private IEnumerator RestartGame()
+    {
+        yield return new WaitForSeconds(_gameRestartTime);
+
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    private void UpdateBestScore()
+    {
+        if (_currentScore > _bestScore)
         {
             _bestScore = _currentScore;
             _uIController.SetBestScoreText(_bestScore);
+
             _dataManager.SetBestScore(_bestScore);
             _dataManager.Save();
         }
