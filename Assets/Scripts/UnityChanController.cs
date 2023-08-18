@@ -39,6 +39,7 @@ public class UnityChanController : MonoBehaviour
 	private Vector3 _initColCenter;
 
 	private bool _canPlay => _lost == false && _initialized;
+	private bool _canJump = true;
 
 	public void Initialize()
     {
@@ -98,13 +99,25 @@ public class UnityChanController : MonoBehaviour
 
 	protected void OnCollisionEnter(Collision collision)
     {
-		if(collision.gameObject.CompareTag("Obstacle"))
-        {
+		if (collision.gameObject.CompareTag("Obstacle"))
+		{
 			_anim.SetTrigger(LOSE_TRIGGER);
 			_lost = true;
 			_lostEvent.Invoke();
+		}
+		else if (collision.gameObject.CompareTag("Ground"))
+        {
+			_canJump = true;
         }
     }
+
+    protected void OnCollisionExit(Collision collision)
+    {
+		if (collision.gameObject.CompareTag("Ground"))
+		{
+			_canJump = false;
+		}
+	}
 
     protected void OnTriggerEnter(Collider other)
     {
@@ -195,7 +208,7 @@ public class UnityChanController : MonoBehaviour
 
 	private void Jump()
     {
-		if (_anim.IsInTransition(0) == false)
+		if (_anim.IsInTransition(0) == false && _canJump)
 		{
 			_rb.AddForce(Vector3.up * jumpPower, ForceMode.VelocityChange);
 			_anim.SetTrigger(JUMP_TRIGGER);
