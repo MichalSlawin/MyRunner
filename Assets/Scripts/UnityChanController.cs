@@ -130,10 +130,10 @@ public class UnityChanController : MonoBehaviour
 	public void OnSlide(float heightMultiplier)
     {
 		float newHeight = _initColHeight * heightMultiplier;
-		float heightDiff = _col.height - newHeight;
+		float heightDiff = _initColHeight - newHeight;
 
 		_col.height = newHeight;
-		_col.center = new Vector3(0, _initColCenter.y - heightDiff, 0);
+		_col.center = new Vector3(0, _initColCenter.y - (heightDiff / 2), 0);
 	}
 
 	public void OnSlideFinish()
