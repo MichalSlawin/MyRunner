@@ -109,9 +109,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: efdb5a594ebf1304cbe6faf476521e81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _obstaclesPrefabs:
-  - {fileID: 7779680770903580174, guid: 6aacf4ca95ac15b47ac24c4150cdc61d, type: 3}
-  - {fileID: 7779680770903580174, guid: 0adbf705250d8804c93f5c88e06c0523, type: 3}
   _obstacles: {fileID: 7010529171751445127}
   _obstaclesStart: {fileID: 698017903766738594}
   _obstaclesEnd: {fileID: 1106938221909667183}
@@ -237,7 +234,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7010529171751445124}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.25, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

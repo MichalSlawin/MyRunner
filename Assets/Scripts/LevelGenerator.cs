@@ -16,7 +16,7 @@ public class LevelGenerator : MonoBehaviour
 
     public void OnNextPartEnter()
     {
-        Destroy(_currentPart.gameObject);
+        _currentPart.DestroyPart();
 
         Vector3 position = _nextPart.transform.position;
         LevelPart newPart = Instantiate(_levelPartPrefab, 

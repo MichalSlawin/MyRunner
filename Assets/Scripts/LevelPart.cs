@@ -3,10 +3,11 @@ using UnityEngine;
 
 public class LevelPart : MonoBehaviour
 {
-    [SerializeField] private List<GameObject> _obstaclesPrefabs;
     [SerializeField] private Transform _obstacles;
     [SerializeField] private Transform _obstaclesStart;
     [SerializeField] private Transform _obstaclesEnd;
+
+    private List<Obstacle> _obstaclesList = new List<Obstacle>();
 
     public void Initialize(float? forcedStartZ = null)
     {
@@ -15,22 +16,42 @@ public class LevelPart : MonoBehaviour
 
         for (float z = startZ; z <= endZ; z += Game.MIN_OBSTACLES_DISTANCE)
         {
-            TryInstantiateObstacle(-Game.LANE_OFFSET, z);
-            TryInstantiateObstacle(0, z);
-            TryInstantiateObstacle(Game.LANE_OFFSET, z);
+            TryPlaceObstacle(-Game.LANE_OFFSET, z);
+            TryPlaceObstacle(0, z);
+            TryPlaceObstacle(Game.LANE_OFFSET, z);
         }
     }
 
-    private void TryInstantiateObstacle(float x, float z)
+    private void TryPlaceObstacle(float x, float z)
     {
         System.Random random = new System.Random();
 
-        if (random.Next(2) == 0)
+        if(random.Next(2) == 0)
         {
-            GameObject prefab = _obstaclesPrefabs[random.Next(2)];
-            float y = prefab.transform.position.y + _obstacles.position.y;
-            Instantiate(prefab, new Vector3(x, y, z),
-                Quaternion.identity, _obstacles);
+            return;
         }
+
+        Obstacle obstacle = ObstaclesPool.Instance.GetObstacle((ObstacleType) random.Next(ObstaclesPool.Instance.PrefabsCount));
+        if(obstacle == null)
+        {
+            Debug.LogError("obstacle from pool is null");
+            return;
+        }
+
+        obstacle.transform.SetParent(_obstacles);
+        obstacle.transform.SetPositionAndRotation(new Vector3(x, 0, z), Quaternion.identity);
+        obstacle.gameObject.SetActive(true);
+
+        _obstaclesList.Add(obstacle);
+    }
+
+    public void DestroyPart()
+    {
+        foreach(Obstacle obstacle in _obstaclesList)
+        {
+            ObstaclesPool.Instance.ReturnToPool(obstacle);
+        }
+
+        Destroy(gameObject);
     }
 }
