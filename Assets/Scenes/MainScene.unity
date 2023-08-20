@@ -1104,8 +1104,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41790dfd3904dfc4098271a7530f757f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animSpeed: 1.5
-  jumpPower: 5
+  _animSpeed: 1.5
+  _jumpPower: 5
+  _fallPower: 3
   _moveSpeed: 5
   _col: {fileID: 1561146890}
   _rb: {fileID: 1561146889}
@@ -1862,6 +1863,10 @@ PrefabInstance:
     - target: {fileID: 400100, guid: 40046bae76ac54bffb59f14f47d9ba1b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5400000, guid: 40046bae76ac54bffb59f14f47d9ba1b, type: 3}
+      propertyPath: m_CollisionDetection
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 11400002, guid: 40046bae76ac54bffb59f14f47d9ba1b, type: 3}

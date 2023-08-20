@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -7,14 +8,18 @@ public class UnityChanController : MonoBehaviour
 	private const string SLIDE_TRIGGER = "Slide";
 	private const string LOSE_TRIGGER = "Lose";
 
-	[SerializeField] private float animSpeed = 1.5f;
-	[SerializeField] private float jumpPower = 3.0f;
-	[SerializeField] private float _moveSpeed = 7f;
+	[SerializeField] private float _animSpeed = 1.5f;
+	[SerializeField] private float _jumpPower = 5f;
+	[SerializeField] private float _fallPower = 3f;
+	[SerializeField] private float _moveSpeed = 5f;
 	[SerializeField] private CapsuleCollider _col;
 	[SerializeField] private Rigidbody _rb;
 	[SerializeField] private Animator _anim;
 	[SerializeField] private UnityEvent _nextPartEvent;
 	[SerializeField] private UnityEvent _lostEvent;
+
+	private Coroutine _jumpCoroutine;
+	private Coroutine _slideCoroutine;
 
 	private enum Lane
     {
@@ -43,7 +48,7 @@ public class UnityChanController : MonoBehaviour
 
 	public void Initialize()
     {
-		_anim.speed = animSpeed;
+		_anim.speed = _animSpeed;
 		_anim.SetFloat("Speed", 1f);
 
 		_initColHeight = _col.height;
@@ -192,13 +197,23 @@ public class UnityChanController : MonoBehaviour
 	private void ChangeLane(Direction direction)
     {
 		_direction = direction;
+		Lane _newLanePrev = _newLane;
+
 		if (direction == Direction.Right && _occupiedLane != Lane.Right)
         {
 			_newLane = _occupiedLane == Lane.Left ? Lane.Middle : Lane.Right;
+			if(_newLane == _newLanePrev)
+            {
+				_newLane = Lane.Right;
+            }
         }
 		else if (direction == Direction.Left && _occupiedLane != Lane.Left)
         {
 			_newLane = _occupiedLane == Lane.Right ? Lane.Middle : Lane.Left;
+			if (_newLane == _newLanePrev)
+			{
+				_newLane = Lane.Left;
+			}
 		}
 		else
         {
@@ -210,16 +225,46 @@ public class UnityChanController : MonoBehaviour
     {
 		if (_anim.IsInTransition(0) == false && _canJump)
 		{
-			_rb.AddForce(Vector3.up * jumpPower, ForceMode.VelocityChange);
+			_rb.AddForce(Vector3.up * _jumpPower, ForceMode.VelocityChange);
 			_anim.SetTrigger(JUMP_TRIGGER);
+			_jumpCoroutine = null;
 		}
+		else if(_jumpCoroutine == null)
+        {
+			_jumpCoroutine = StartCoroutine(JumpWhenPossible());
+        }
 	}
+
+	private IEnumerator JumpWhenPossible()
+    {
+		yield return new WaitUntil(() => _anim.IsInTransition(0) == false && _canJump);
+		Jump();
+    }
 
 	private void Slide()
     {
 		if (_anim.IsInTransition(0) == false)
 		{
-			_anim.SetTrigger(SLIDE_TRIGGER);
+			if(_canJump)
+            {
+				_anim.SetTrigger(SLIDE_TRIGGER);
+			}
+			else
+            {
+				_rb.AddForce(Vector3.down * _fallPower, ForceMode.VelocityChange);
+			}
+
+			_slideCoroutine = null;
 		}
+		else if(_slideCoroutine == null)
+        {
+			_slideCoroutine = StartCoroutine(SlideWhenPossible());
+        }
+	}
+
+	private IEnumerator SlideWhenPossible()
+    {
+		yield return new WaitUntil(() => _anim.IsInTransition(0) == false && _canJump);
+		Slide();
 	}
 }
