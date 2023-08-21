@@ -361,6 +361,13 @@ MonoBehaviour:
   - {fileID: 1691379326195418085, guid: 6aacf4ca95ac15b47ac24c4150cdc61d, type: 3}
   - {fileID: 3571767505280499231, guid: 0adbf705250d8804c93f5c88e06c0523, type: 3}
   - {fileID: 3571767505280499231, guid: cbff7dcf4d8b1c34c9e3d51178501199, type: 3}
+  _obstacleMaterials:
+  - {fileID: 2100000, guid: 5e2a77305cb7a6144ab67937f6034347, type: 2}
+  - {fileID: 2100000, guid: ec0716c6c32b1f14c9846d627c81c3e7, type: 2}
+  - {fileID: 2100000, guid: 178f2db2d6ac87148a53d5d24d4ce02e, type: 2}
+  - {fileID: 2100000, guid: e4e30e552374bc64788723cc5a20115c, type: 2}
+  - {fileID: 2100000, guid: 5eb48d35a93e38341bb574a378dafee0, type: 2}
+  - {fileID: 2100000, guid: fb61a0d05dab6454699edf41b260190a, type: 2}
 --- !u!4 &363914915
 Transform:
   m_ObjectHideFlags: 0
@@ -608,10 +615,6 @@ MonoBehaviour:
   _currentPart: {fileID: 7010529170083080187}
   _nextPart: {fileID: 1686665144}
   _levelPartPrefab: {fileID: 5252053079708571737, guid: 0fecb6b03608cd840b2ce68bceaac90a, type: 3}
-  _obstacleMaterials:
-  - {fileID: 2100000, guid: 178f2db2d6ac87148a53d5d24d4ce02e, type: 2}
-  - {fileID: 2100000, guid: 5eb48d35a93e38341bb574a378dafee0, type: 2}
-  - {fileID: 2100000, guid: fb61a0d05dab6454699edf41b260190a, type: 2}
   _obstaclesDistanceStart: 8
   _obstaclesDistanceEnd: 4
   _obstaclesDistanceStep: 0.5

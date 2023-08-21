@@ -6,6 +6,7 @@ public class ObstaclesPool : MonoBehaviour
 {
     [SerializeField] private Transform _poolTransform;
     [SerializeField] private List<Obstacle> _obstaclesPrefabs;
+    [SerializeField] private List<Material> _obstacleMaterials;
 
     public static ObstaclesPool Instance;
 
@@ -16,6 +17,15 @@ public class ObstaclesPool : MonoBehaviour
     protected void Awake()
     {
         Instance = this;
+    }
+
+    public Material GetRandomMaterial()
+    {
+        System.Random random = new System.Random();
+
+        int materialIdx = random.Next(_obstacleMaterials.Count);
+
+        return _obstacleMaterials[materialIdx];
     }
 
     protected void Start()
@@ -36,7 +46,9 @@ public class ObstaclesPool : MonoBehaviour
 
             if (pooledCount == 0)
             {
-                return Instantiate(_obstaclesPrefabs[(int) type]);
+                Obstacle newObstacle = Instantiate(_obstaclesPrefabs[(int)type]);
+                newObstacle.ChangeMaterial(GetRandomMaterial());
+                return newObstacle;
             }
 
             Obstacle obstacle = pooledObstacles[pooledCount - 1];
