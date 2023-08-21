@@ -16,7 +16,7 @@ public class LevelPart : MonoBehaviour
         float startZ = forcedStartZ ?? _obstaclesStart.position.z;
         float endZ = _obstaclesEnd.position.z;
 
-        for (float z = startZ; z <= endZ; z += LevelGenerator.ObstaclesDistance)
+        for (float z = startZ; z <= endZ; z += LevelGenerator.Instance.ObstaclesDistance)
         {
             GetRandomPrefabNumbers(out int prefab1, out int prefab2, out int prefab3);
 
@@ -60,6 +60,8 @@ public class LevelPart : MonoBehaviour
         obstacle.gameObject.SetActive(true);
 
         _obstaclesList.Add(obstacle);
+
+        obstacle.ChangeMaterial(LevelGenerator.Instance.GetRandomMaterial());
     }
 
     public void DestroyPart()

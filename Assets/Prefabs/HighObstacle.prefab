@@ -242,6 +242,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _obstacleType: 1
+  _renderers:
+  - {fileID: 5142502721110455687}
+  - {fileID: 76183467923610817}
+  - {fileID: 2700085859279991585}
 --- !u!1 &7928711493697312307
 GameObject:
   m_ObjectHideFlags: 0

@@ -143,3 +143,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _obstacleType: 0
+  _renderers:
+  - {fileID: 6868593467054103704}

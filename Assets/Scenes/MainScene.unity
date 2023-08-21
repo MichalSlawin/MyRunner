@@ -608,6 +608,10 @@ MonoBehaviour:
   _currentPart: {fileID: 7010529170083080187}
   _nextPart: {fileID: 1686665144}
   _levelPartPrefab: {fileID: 5252053079708571737, guid: 0fecb6b03608cd840b2ce68bceaac90a, type: 3}
+  _obstacleMaterials:
+  - {fileID: 2100000, guid: 178f2db2d6ac87148a53d5d24d4ce02e, type: 2}
+  - {fileID: 2100000, guid: 5eb48d35a93e38341bb574a378dafee0, type: 2}
+  - {fileID: 2100000, guid: fb61a0d05dab6454699edf41b260190a, type: 2}
   _obstaclesDistanceStart: 8
   _obstaclesDistanceEnd: 4
   _obstaclesDistanceStep: 0.5

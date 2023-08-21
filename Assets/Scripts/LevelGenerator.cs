@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class LevelGenerator : MonoBehaviour, IDifficultyUpdater
@@ -7,12 +8,19 @@ public class LevelGenerator : MonoBehaviour, IDifficultyUpdater
     [SerializeField] private LevelPart _currentPart;
     [SerializeField] private LevelPart _nextPart;
     [SerializeField] private LevelPart _levelPartPrefab;
+    [SerializeField] private List<Material> _obstacleMaterials;
     [Header("Obstacles distance")]
     [SerializeField] private float _obstaclesDistanceStart = 8f;
     [SerializeField] private float _obstaclesDistanceEnd = 4f;
     [SerializeField] private float _obstaclesDistanceStep = 0.5f;
 
-    public static float ObstaclesDistance { get; private set; }
+    public static LevelGenerator Instance;
+    public float ObstaclesDistance { get; private set; }
+
+    protected void Awake()
+    {
+        Instance = this;
+    }
 
     public void IncreaseDifficulty()
     {
@@ -40,5 +48,14 @@ public class LevelGenerator : MonoBehaviour, IDifficultyUpdater
 
         _currentPart = _nextPart;
         _nextPart = newPart;
+    }
+
+    public Material GetRandomMaterial()
+    {
+        System.Random random = new System.Random();
+
+        int materialIdx = random.Next(_obstacleMaterials.Count);
+
+        return _obstacleMaterials[materialIdx];
     }
 }
