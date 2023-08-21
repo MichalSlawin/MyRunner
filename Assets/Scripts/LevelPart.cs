@@ -14,7 +14,7 @@ public class LevelPart : MonoBehaviour
         float startZ = forcedStartZ ?? _obstaclesStart.position.z;
         float endZ = _obstaclesEnd.position.z;
 
-        for (float z = startZ; z <= endZ; z += Game.MIN_OBSTACLES_DISTANCE)
+        for (float z = startZ; z <= endZ; z += LevelGenerator.ObstaclesDistance)
         {
             TryPlaceObstacle(-Game.LANE_OFFSET, z);
             TryPlaceObstacle(0, z);

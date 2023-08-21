@@ -2,17 +2,20 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
 
 public class Game : MonoBehaviour
 {
     public const float LANE_OFFSET = 2f;
-    public const float MIN_OBSTACLES_DISTANCE = 5f;
 
     [SerializeField] private UnityChanController _unityChan;
     [SerializeField] private InputAction _start;
     [SerializeField] private LevelGenerator _levelGenerator;
     [SerializeField] private UIController _uIController;
     [SerializeField] private float _gameRestartTime = 1.5f;
+    [Header("Difficulty")]
+    [SerializeField] private int _increaseDifficultyStep = 1000;
+    [SerializeField] private List<MonoBehaviour> _difficultyUpdaters;
 
     private float _playerStartZ;
     private bool _gameStarted;
@@ -20,6 +23,7 @@ public class Game : MonoBehaviour
     private int _bestScore;
     private DataManager _dataManager;
     private bool _gameLost;
+    private int _increaseDifficultyOn;
 
     protected void Awake()
     {
@@ -27,6 +31,7 @@ public class Game : MonoBehaviour
         Application.targetFrameRate = 60;
 
         InitDataManager();
+        _increaseDifficultyOn = _increaseDifficultyStep;
 
         _start.performed += _ => { StartGame(); };
     }
@@ -58,11 +63,29 @@ public class Game : MonoBehaviour
 
     protected void FixedUpdate()
     {
-        if(_gameLost == false)
+        if(_gameLost)
         {
-            _currentScore = (int)((_unityChan.transform.position.z - _playerStartZ) * 10);
-            _uIController.SetCurrentScoreText(_currentScore);
+            return;
         }
+        
+        _currentScore = (int)((_unityChan.transform.position.z - _playerStartZ) * 10);
+        _uIController.SetCurrentScoreText(_currentScore);
+        TryIncreaseDifficulty();
+    }
+
+    private void TryIncreaseDifficulty()
+    {
+        if(_currentScore < _increaseDifficultyOn)
+        {
+            return;
+        }
+
+        foreach(IDifficultyUpdater difficultyUpdater in _difficultyUpdaters)
+        {
+            difficultyUpdater.IncreaseDifficulty();
+        }
+
+        _increaseDifficultyOn += _increaseDifficultyStep;
     }
 
     private void StartGame()

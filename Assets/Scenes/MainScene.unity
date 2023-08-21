@@ -607,6 +607,9 @@ MonoBehaviour:
   _currentPart: {fileID: 7010529170083080187}
   _nextPart: {fileID: 1686665144}
   _levelPartPrefab: {fileID: 5252053079708571737, guid: 0fecb6b03608cd840b2ce68bceaac90a, type: 3}
+  _obstaclesDistanceStart: 8
+  _obstaclesDistanceEnd: 4
+  _obstaclesDistanceStep: 0.5
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -1107,7 +1110,9 @@ MonoBehaviour:
   _animSpeed: 1.5
   _jumpPower: 5
   _fallPower: 3
-  _moveSpeed: 5
+  _moveSpeedStart: 5
+  _moveSpeedEnd: 7
+  _moveSpeedStep: 0.5
   _col: {fileID: 1561146890}
   _rb: {fileID: 1561146889}
   _anim: {fileID: 1561146891}
@@ -1674,6 +1679,10 @@ MonoBehaviour:
   _levelGenerator: {fileID: 926702448}
   _uIController: {fileID: 2062107417}
   _gameRestartTime: 1.5
+  _increaseDifficultyStep: 1000
+  _difficultyUpdaters:
+  - {fileID: 926702448}
+  - {fileID: 1561146893}
 --- !u!1 &2062107412
 GameObject:
   m_ObjectHideFlags: 0

@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class UnityChanController : MonoBehaviour
+public class UnityChanController : MonoBehaviour, IDifficultyUpdater
 {
 	private const string JUMP_TRIGGER = "Jump";
 	private const string SLIDE_TRIGGER = "Slide";
@@ -11,15 +11,22 @@ public class UnityChanController : MonoBehaviour
 	[SerializeField] private float _animSpeed = 1.5f;
 	[SerializeField] private float _jumpPower = 5f;
 	[SerializeField] private float _fallPower = 3f;
-	[SerializeField] private float _moveSpeed = 5f;
+	[Header("Move speed")]
+	[SerializeField] private float _moveSpeedStart = 5f;
+	[SerializeField] private float _moveSpeedEnd = 7f;
+	[SerializeField] private float _moveSpeedStep = 0.5f;
+	[Header("Components")]
 	[SerializeField] private CapsuleCollider _col;
 	[SerializeField] private Rigidbody _rb;
 	[SerializeField] private Animator _anim;
+	[Header("Events")]
 	[SerializeField] private UnityEvent _nextPartEvent;
 	[SerializeField] private UnityEvent _lostEvent;
 
 	private Coroutine _jumpCoroutine;
 	private Coroutine _slideCoroutine;
+
+	private float _moveSpeed;
 
 	private enum Lane
     {
@@ -45,9 +52,11 @@ public class UnityChanController : MonoBehaviour
 
 	private bool _canPlay => _lost == false && _initialized;
 	private bool _canJump = true;
+	private bool _jumped;
 
 	public void Initialize()
     {
+		_moveSpeed = _moveSpeedStart;
 		_anim.speed = _animSpeed;
 		_anim.SetFloat("Speed", 1f);
 
@@ -118,9 +127,10 @@ public class UnityChanController : MonoBehaviour
 
     protected void OnCollisionExit(Collision collision)
     {
-		if (collision.gameObject.CompareTag("Ground"))
+		if (_jumped && collision.gameObject.CompareTag("Ground"))
 		{
 			_canJump = false;
+			_jumped = false;
 		}
 	}
 
@@ -228,6 +238,7 @@ public class UnityChanController : MonoBehaviour
 			_rb.AddForce(Vector3.up * _jumpPower, ForceMode.VelocityChange);
 			_anim.SetTrigger(JUMP_TRIGGER);
 			_jumpCoroutine = null;
+			_jumped = true;
 		}
 		else if(_jumpCoroutine == null)
         {
@@ -267,4 +278,12 @@ public class UnityChanController : MonoBehaviour
 		yield return new WaitUntil(() => _anim.IsInTransition(0) == false && _canJump);
 		Slide();
 	}
+
+    public void IncreaseDifficulty()
+    {
+        if(_moveSpeed < _moveSpeedEnd)
+        {
+			_moveSpeed += _moveSpeedStep;
+        }
+    }
 }
