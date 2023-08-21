@@ -11,6 +11,7 @@ public class UnityChanController : MonoBehaviour, IDifficultyUpdater
 	[SerializeField] private float _animSpeed = 1.5f;
 	[SerializeField] private float _jumpPower = 5f;
 	[SerializeField] private float _fallPower = 3f;
+	[SerializeField] private PlayerAudio _playerAudio;
 	[Header("Move speed")]
 	[SerializeField] private float _moveSpeedStart = 5f;
 	[SerializeField] private float _moveSpeedEnd = 7f;
@@ -65,6 +66,8 @@ public class UnityChanController : MonoBehaviour, IDifficultyUpdater
 
 		_lost = false;
 		_initialized = true;
+
+		PlayAudio(AudioClipType.Start);
 	}
 
     protected void FixedUpdate()
@@ -77,6 +80,11 @@ public class UnityChanController : MonoBehaviour, IDifficultyUpdater
 		Vector3 direction = new Vector3(GetNewDirectionX(), 0, 1);
 		_rb.MovePosition(transform.position + direction * Time.deltaTime * _moveSpeed);
 	}
+
+	public void PlayAudio(AudioClipType type)
+    {
+		_playerAudio.PlayClip(type);
+    }
 
 	private float GetNewDirectionX()
     {
@@ -239,6 +247,8 @@ public class UnityChanController : MonoBehaviour, IDifficultyUpdater
 			_anim.SetTrigger(JUMP_TRIGGER);
 			_jumpCoroutine = null;
 			_jumped = true;
+
+			PlayAudio(AudioClipType.Jump);
 		}
 		else if(_jumpCoroutine == null)
         {
@@ -259,6 +269,8 @@ public class UnityChanController : MonoBehaviour, IDifficultyUpdater
 			if(_canJump)
             {
 				_anim.SetTrigger(SLIDE_TRIGGER);
+
+				PlayAudio(AudioClipType.Slide);
 			}
 			else
             {

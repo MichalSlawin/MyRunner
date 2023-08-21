@@ -126,6 +126,12 @@ public class Game : MonoBehaviour
 
             _dataManager.SetBestScore(_bestScore);
             _dataManager.Save();
+
+            _unityChan.PlayAudio(AudioClipType.Win);
+        }
+        else
+        {
+            _unityChan.PlayAudio(AudioClipType.Lose);
         }
     }
 }
