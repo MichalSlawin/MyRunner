@@ -360,6 +360,7 @@ MonoBehaviour:
   _obstaclesPrefabs:
   - {fileID: 1691379326195418085, guid: 6aacf4ca95ac15b47ac24c4150cdc61d, type: 3}
   - {fileID: 3571767505280499231, guid: 0adbf705250d8804c93f5c88e06c0523, type: 3}
+  - {fileID: 3571767505280499231, guid: cbff7dcf4d8b1c34c9e3d51178501199, type: 3}
 --- !u!4 &363914915
 Transform:
   m_ObjectHideFlags: 0

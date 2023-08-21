@@ -1,5 +1,6 @@
 public enum ObstacleType
 {
     Low,
-    High
+    High,
+    Wall
 }

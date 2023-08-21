@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class LevelPart : MonoBehaviour
 {
+    private const int SPAWN_OBSTACLE_CHANCE = 3;
+
     [SerializeField] private Transform _obstacles;
     [SerializeField] private Transform _obstaclesStart;
     [SerializeField] private Transform _obstaclesEnd;
@@ -16,22 +18,37 @@ public class LevelPart : MonoBehaviour
 
         for (float z = startZ; z <= endZ; z += LevelGenerator.ObstaclesDistance)
         {
-            TryPlaceObstacle(-Game.LANE_OFFSET, z);
-            TryPlaceObstacle(0, z);
-            TryPlaceObstacle(Game.LANE_OFFSET, z);
+            GetRandomPrefabNumbers(out int prefab1, out int prefab2, out int prefab3);
+
+            TryPlaceObstacle(-Game.LANE_OFFSET, z, prefab1);
+            TryPlaceObstacle(0, z, prefab2);
+            TryPlaceObstacle(Game.LANE_OFFSET, z, prefab3);
         }
     }
 
-    private void TryPlaceObstacle(float x, float z)
+    public void GetRandomPrefabNumbers(out int prefab1, out int prefab2, out int prefab3)
     {
         System.Random random = new System.Random();
 
-        if(random.Next(2) == 0)
+        do
+        {
+            prefab1 = random.Next(ObstaclesPool.Instance.PrefabsCount);
+            prefab2 = random.Next(ObstaclesPool.Instance.PrefabsCount);
+            prefab3 = random.Next(ObstaclesPool.Instance.PrefabsCount);
+        }
+        while (prefab1 == prefab2 && prefab2 == prefab3);
+    }
+
+    private void TryPlaceObstacle(float x, float z, int prefabNumber)
+    {
+        System.Random random = new System.Random();
+
+        if(random.Next(SPAWN_OBSTACLE_CHANCE) == 0)
         {
             return;
         }
 
-        Obstacle obstacle = ObstaclesPool.Instance.GetObstacle((ObstacleType) random.Next(ObstaclesPool.Instance.PrefabsCount));
+        Obstacle obstacle = ObstaclesPool.Instance.GetObstacle((ObstacleType) prefabNumber);
         if(obstacle == null)
         {
             Debug.LogError("obstacle from pool is null");
